@@ -132,7 +132,66 @@ func main() {
 			fmt.Println("\nPressione ENTER para voltar ao menu...")
 			ReadLine(reader)
 		case 3:
-			// Consultar pedidos
+			for {
+				ui.ClearScreen()
+
+				orders := services.GetOrders()
+
+				fmt.Println("BURGER ORDER SYSTEM --> PEDIDOS\n")
+
+				if len(orders) == 0 {
+					fmt.Println("Nenhum pedido encontrado.")
+					fmt.Println("\nPressione ENTER para voltar...")
+					ReadLine(reader)
+					break
+				}
+
+				for i, order := range orders {
+					fmt.Printf("%d. %s | %s | R$ %.2f\n", i+1, order.Client, order.Status, services.CalculateTotal(&order))
+				}
+
+				fmt.Println("0. Voltar")
+
+				fmt.Print("\nSelecione um pedido: ")
+				choice, err := ReadInt(reader)
+
+				if err != nil || choice < 0 || choice > len(orders) {
+					fmt.Println("\nOpção inválida!")
+					fmt.Println("\nPressione ENTER para continuar...")
+					ReadLine(reader)
+					continue
+				}
+
+				if choice == 0 {
+					break
+				}
+
+				selectedOrder := orders[choice-1]
+
+				ui.ClearScreen()
+
+				fmt.Println("BURGER ORDER SYSTEM --> PEDIDOS --> NOTA FISCAL\n")
+
+				fmt.Printf("Cliente: %s\n", selectedOrder.Client)
+				fmt.Printf("Status: %s\n\n", selectedOrder.Status)
+
+				fmt.Println("---------------------------------------------")
+
+				for _, product := range selectedOrder.Products {
+					subtotal := product.Product.Price * float64(product.Quantity)
+
+					fmt.Printf("%dx %-20s R$ %.2f\n", product.Quantity, product.Product.Name, subtotal)
+				}
+
+				fmt.Println("---------------------------------------------")
+
+				fmt.Printf("\nTOTAL: R$ %.2f\n", services.CalculateTotal(&selectedOrder))
+
+				fmt.Println("\n---------------------------------------------")
+
+				fmt.Println("\nPressione ENTER para voltar aos pedidos...")
+				ReadLine(reader)
+			}
 		case 0:
 			fmt.Println("\nEncerrando o sistema...")
 			return
