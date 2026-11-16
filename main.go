@@ -47,7 +47,78 @@ func main() {
 
 		switch option {
 		case 1:
-			// Novo pedido
+			ui.ClearScreen()
+
+			fmt.Println("BURGER ORDER SYSTEM --> NOVO PEDIDO\n")
+
+			fmt.Print("Nome do cliente: ")
+			client := ReadLine(reader)
+
+			order := services.CreateOrder(client)
+
+			for {
+				ui.ClearScreen()
+
+				fmt.Println("BURGER ORDER SYSTEM --> NOVO PEDIDO\n")
+
+				fmt.Printf("\nCliente: %s | Status: %s\n\n", order.Client, order.Status)
+
+				if len(order.Products) == 0 {
+					fmt.Println("Nenhum produto adicionado.")
+				}
+
+				for i, product := range order.Products {
+					subtotal := product.Product.Price * float64(product.Quantity)
+
+					fmt.Printf("%d. %dx %s | R$ %.2f\n", i+1, product.Quantity, product.Product.Name, subtotal)
+				}
+
+				fmt.Printf("\nTotal: R$ %.2f\n", services.CalculateTotal(&order))
+
+				fmt.Println("\nSelecione um produto:\n")
+
+				for i, product := range products {
+					fmt.Printf("%d. %s | R$ %.2f\n", i+1, product.Name, product.Price)
+				}
+
+				fmt.Println("0. Finalizar pedido")
+
+				fmt.Print("\nProduto: ")
+				choice, err := ReadInt(reader)
+
+				if err != nil || choice < 0 || choice > len(products) {
+					fmt.Println("\nOpção inválida!")
+					fmt.Println("\nPressione ENTER para continuar...")
+					ReadLine(reader)
+					continue
+				}
+
+				if choice == 0 {
+					break
+				}
+
+				fmt.Print("Quantidade: ")
+				quantity, err := ReadInt(reader)
+
+				if err != nil {
+					fmt.Println("\nQuantidade inválida!")
+					fmt.Println("\nPressione ENTER para continuar...")
+					ReadLine(reader)
+					continue
+				}
+
+				product := products[choice-1]
+
+				if err := services.AddProduct(&order, &product, quantity); err != nil {
+					fmt.Printf("\nErro: %s\n", err)
+				}
+			}
+
+			ui.ClearScreen()
+
+			order.Status = "Finalizado"
+
+			services.SaveOrder(order)
 		case 2:
 			ui.ClearScreen()
 
