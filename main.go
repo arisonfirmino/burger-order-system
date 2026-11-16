@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	ui "burger-order-system/helpers"
+	"burger-order-system/services"
 )
 
 func ReadLine(reader *bufio.Reader) string {
@@ -20,16 +21,14 @@ func ReadInt(reader *bufio.Reader) (int, error) {
 	return strconv.Atoi(text)
 }
 
-func Pause(reader *bufio.Reader) {
-	println("\nPressione ENTER para continuar...")
-	ReadLine(reader)
-}
-
 func main() {
 	reader := bufio.NewReader(os.Stdin)
+	products := services.GetProducts()
 
 	for {
 		ui.ClearScreen()
+
+		fmt.Println("--> BURGER ORDER SYSTEM\n")
 
 		fmt.Println("1. Novo pedido")
 		fmt.Println("2. Ver cardápio")
@@ -50,9 +49,19 @@ func main() {
 		case 1:
 			// Novo pedido
 		case 2:
-			// Ver cardápio
+			ui.ClearScreen()
+
+			fmt.Println("BURGER ORDER SYSTEM --> CARDÁPIO\n")
+
+			for i, product := range products {
+				fmt.Printf("%d. %s | R$ %.2f\n", i+1, product.Name, product.Price)
+				fmt.Printf("%s\n\n", product.Description)
+			}
+
+			fmt.Println("\nPressione ENTER para voltar ao menu...")
+			ReadLine(reader)
 		case 3:
-			// COnsultar pedidos
+			// Consultar pedidos
 		case 0:
 			fmt.Println("\nEncerrando o sistema...")
 			return
