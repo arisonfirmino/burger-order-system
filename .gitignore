@@ -1,0 +1,28 @@
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Test binaries
+*.test
+
+# Go workspace
+go.work
+go.work.sum
+
+# Environment variables
+.env
+.env.*
+
+# IDE and editor files
+.vscode/
+.idea/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.log
